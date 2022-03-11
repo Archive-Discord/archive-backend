@@ -13,7 +13,7 @@ class UsersRoute implements Routes {
   }
 
   private initializeRoutes() {
-    this.router.get(`${this.path}/:id(\\d+)`, this.usersController.getUserById);
+    this.router.get(`${this.path}/:id`, this.usersController.getUserById);
     this.router.get(`${this.path}/@me`, authMiddleware, this.usersController.getUserByme);
   }
 }
