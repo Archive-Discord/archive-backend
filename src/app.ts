@@ -7,7 +7,7 @@ import hpp from 'hpp';
 import morgan from 'morgan';
 import { connect, set } from 'mongoose';
 import swaggerJSDoc from 'swagger-jsdoc';
-import swaggerUi from 'swagger-ui-express';
+import swaggerUi, { SwaggerUiOptions } from 'swagger-ui-express';
 import { NODE_ENV, PORT, LOG_FORMAT, ORIGIN, CREDENTIALS, TOKEN } from '@config';
 import { dbConnection } from '@databases';
 import { Routes } from '@interfaces/routes.interface';
@@ -84,16 +84,21 @@ class App {
     const options = {
       swaggerDefinition: {
         info: {
-          title: 'REST API',
+          title: '아카이브 API',
           version: '1.0.0',
-          description: 'Example docs',
+          description: 'Archive Docs'
         },
       },
       apis: ['swagger.yaml'],
     };
 
+    const opts: SwaggerUiOptions = {
+      customfavIcon: `${ORIGIN}/favicon.ico`,
+      customSiteTitle: 'API - 아카이브 ',
+    }
+
     const specs = swaggerJSDoc(options);
-    this.app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
+    this.app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs, opts));
   }
 
   private initializeErrorHandling() {

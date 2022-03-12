@@ -1,4 +1,5 @@
 import { User as DiscordUser } from "discord.js";
+import { Server } from "./servers.interface";
 
 export interface User {
   id: string;
@@ -12,6 +13,8 @@ export interface User {
   token?: string;
   refreshToken?: string;
   published_date?: Date;
+  new?: boolean;
+  servers?: Server[];
 }
 
 export interface FindeUserDiscordUser {

@@ -1,11 +1,10 @@
 import { User } from "./users.interface";
 
-export interface Server {
+export interface Bot {
   id: string;
   description?: string;
   icon:string;
   name: string;
-  members: number;
   sortDescription: string;
   website?: string;
   like: number;
@@ -15,6 +14,9 @@ export interface Server {
   flags: number;
   published_date: Date;
   created_at: Date;
+  support?: string
+  discriminator: string
+  servers: Number
 }
 export interface ServerComments {
   _id: string;

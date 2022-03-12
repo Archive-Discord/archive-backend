@@ -1,15 +1,15 @@
-import { Client, Guild, MessageEmbed, TextChannel } from "discord.js";
+import { Client, Guild, MessageEmbed, TextChannel, User as DiscordUser } from "discord.js";
 import userModel from "@/models/users.model";
 import { User } from "@/interfaces/users.interface";
 import nodeCache from "./Cache";
 import { ORIGIN, SUPPORT_LOG_CHANNEL_ID, SUPPORT_SERVER_ID } from "@/config";
 
 
-type LogType = "SUBMIT_SERVER" | "ACCEPT_SERVER"| "DENY_SERVER" |"ADD_COMMENT";
+type LogType = "SUBMIT_SERVER" | "SUBMIT_BOT" | "ACCEPT_SERVER"| "DENY_SERVER" |"ADD_COMMENT";
 export const client = new Client({intents: [32767]});
 
 
-export const LogSend = async (type: LogType, user: User, message: string, owners?: string[], server?: Guild, reason?: string) => {
+export const LogSend = async (type: LogType, user: User, message: string, owners?: string[], server?: Guild, reason?: string, bot?: DiscordUser) => {
     const supportGuild = client.guilds.cache.get(SUPPORT_SERVER_ID);
     const supportChannel = supportGuild.channels.cache.get(SUPPORT_LOG_CHANNEL_ID) as TextChannel;
     const logEmbed = new MessageEmbed()
@@ -44,6 +44,36 @@ export const LogSend = async (type: LogType, user: User, message: string, owners
                 \`\`\`${reason}\`\`\`
                 `)
                 .setColor("RED")
+                .setTimestamp()
+            ownerUser.send({embeds: [ownerEmbed]});
+        })
+    }
+    if(type === "SUBMIT_SERVER") {
+        owners.forEach(async (owner) => {
+            let ownerUser = client.users.cache.get(owner);
+            if(!ownerUser) return;
+            const ownerEmbed = new MessageEmbed()
+                .setAuthor(`아카이브 서버 신청 알림`, client.user.avatarURL())
+                .setDescription(`
+                - ${server.name} 서버가 아카이브에 신청되었습니다.
+                - 승인까지 최대 3일이 걸릴 수 있습니다
+                `)
+                .setColor("YELLOW")
+                .setTimestamp()
+            ownerUser.send({embeds: [ownerEmbed]});
+        })
+    }
+    if(type === "SUBMIT_BOT") {
+        owners.forEach(async (owner) => {
+            let ownerUser = client.users.cache.get(owner);
+            if(!ownerUser) return;
+            const ownerEmbed = new MessageEmbed()
+                .setAuthor(`아카이브 봇 신청 알림`, client.user.avatarURL())
+                .setDescription(`
+                - ${bot.username}가 아카이브에 신청되었습니다.
+                - 승인까지 최대 3일이 걸릴 수 있습니다
+                `)
+                .setColor("YELLOW")
                 .setTimestamp()
             ownerUser.send({embeds: [ownerEmbed]});
         })

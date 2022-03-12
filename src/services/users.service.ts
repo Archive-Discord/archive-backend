@@ -3,19 +3,32 @@ import { CreateUserDto } from '@dtos/users.dto';
 import { HttpException } from '@exceptions/HttpException';
 import { FindeUserDiscordUser, User } from '@interfaces/users.interface';
 import userModel from '@/models/users.model';
-import { isEmpty } from '@utils/util';
+import serverModel from '@/models/servers.model';
 import { Request } from 'express';
 import { SECRET_KEY } from '@/config';
 import { verify } from 'jsonwebtoken';
 import { DataStoredInToken } from '@/interfaces/auth.interface';
 import { client } from '@/utils/discord';
+import { Server } from '@/interfaces/servers.interface';
 
 class UserService {
   public async findUserById(userId: string): Promise<User> {
-    const findUser: User = await userModel.findOne({id: userId}, {$select: ['id', 'archive_flags', 'published_date']});
+    const findUser: User = await userModel.findOne({id: userId}, {id: 1, archive_flags: 1, published_date: 1, _id: 0, name: 1, discriminator: 1, avatar: 1});
     if (!findUser) throw new HttpException(404, "찾을 수 없는 유저입니다");
+    const servers: Server[] = await serverModel.find({owners: { $in : [userId] }}, {_id: 0, owners: 1, categories: 1, icon: 1, name: 1, sortDescription: 1, like: 1, members: 1, id: 1, created_at: 1, flags: 1});
+    let discordUser = client.users.cache.get(userId);
+    let userData: User = {
+      id: findUser.id,
+      archive_flags: findUser.archive_flags,
+      published_date: findUser.published_date,
+      username: (discordUser ? discordUser.username : findUser.username),
+      discriminator: (discordUser ? discordUser.discriminator : findUser.discriminator),
+      avatar: (discordUser ? discordUser.avatar : findUser.avatar),
+      servers: servers,
+      new: (discordUser ? true : false)
+    }
 
-    return findUser;
+    return userData;
   }
 
   public async findUserByMe(req: Request): Promise<FindeUserDiscordUser> {
@@ -38,10 +51,10 @@ class UserService {
           user: client.users.cache.get(userId)
         }
       } else {
-        new HttpException(401, '로그인 후 이용해주세요');
+        throw new HttpException(401, '로그인 후 이용해주세요');
       }
     } else {
-      new HttpException(401, '로그인 후 이용해주세요');
+      throw new HttpException(401, '로그인 후 이용해주세요');
     }
   }
 }
