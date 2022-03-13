@@ -14,6 +14,7 @@ import { Routes } from '@interfaces/routes.interface';
 import errorMiddleware from '@middlewares/error.middleware';
 import { logger, stream } from '@utils/logger';
 import { client } from './utils/discord';
+import Dokdo from 'dokdo';
 
 class App {
   public app: express.Application;
@@ -78,6 +79,14 @@ class App {
       logger.info(`🚀 Discord Bot Ready ${client.user.username}#${client.user.discriminator}`);
       logger.info(`=================================`);
     });
+    const dokdo: Dokdo = new Dokdo(client, {
+      prefix: 'a',
+      owners: ['406815674539835402', '896570484588703744'],
+      noPerm: (message) => message.reply('당신은 Dokdo 를 이용할수 없습니다.')
+    })
+    client.on('messageCreate', message => {
+      dokdo.run(message)
+    })
   }
 
   private initializeSwagger() {
