@@ -4,7 +4,7 @@ import { CAPTCHA_SECRET, ORIGIN, SECRET_KEY, TOKEN } from '@/config';
 import { verify } from 'jsonwebtoken';
 import { verify as CaptchaVerify} from "hcaptcha"
 import { DataStoredInToken, RequestWithUser } from '@/interfaces/auth.interface';
-import { client, getUser, LogSend } from '@/utils/discord';
+import { client, fetchUser, getUser, LogSend } from '@/utils/discord';
 import { DiscordUserGuild, FindServerCommentsDataList, FindServerData, FindServerDataList, Server, ServerComments, ServerCommentsData } from '@/interfaces/servers.interface';
 import userModel from '@/models/users.model';
 import serverModel from '@/models/servers.model';
@@ -86,24 +86,14 @@ class BotService {
     }
   }
   public async findSubmitBotById(botId: string): Promise<User> {
-    const discordBot = await client.users.fetch(botId)
-    .catch((e: DiscordAPIError) => {
-      if(e.httpStatus === 404) {
-        throw new HttpException(404, "찾을 수 없는 봇 입니다");
-      }
-    })
+    const discordBot = await fetchUser(botId)
     if(!discordBot) throw new HttpException(404, "찾을 수 없는 봇 입니다");
     if(!discordBot.bot) throw new HttpException(400, "봇만 추가하실 수 있습니다");
     return discordBot;
   }
 
   public async addBot(req: RequestWithUser): Promise<Bot> {
-    const discordBot = await client.users.fetch(req.body.id)
-    .catch((e: DiscordAPIError) => {
-      if(e.httpStatus === 404) {
-        throw new HttpException(404, "찾을 수 없는 봇 입니다");
-      }
-    })
+    const discordBot = await fetchUser(req.body.id)
     if(!discordBot) throw new HttpException(404, "찾을 수 없는 봇 입니다");
     if(!discordBot.bot) throw new HttpException(400, "봇만 신청하실 수 있습니다");
     let botLive = await botModel.findOne({id: req.body.id})

@@ -129,3 +129,12 @@ export const getUser = async(id: string): Promise<User|null> => {
         return user.toJSON() as User
     }
 }
+
+export let fetchUser = async(id: string): Promise<DiscordUser|null> => {
+    try {
+        let user = await client.users.fetch(id)
+        return user.toJSON() as DiscordUser
+    } catch(e) {
+        return null
+    }
+}

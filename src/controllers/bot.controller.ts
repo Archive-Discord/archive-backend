@@ -43,13 +43,13 @@ class botsController {
 
   public getSubmitBotById = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
     try {
-      let cacheData = cache.get(`submit_bot_${req.params.id}`);
+      let cacheData = cache.get(`submit_bot_${req.body.id}`);
       if(cacheData) {
         res.status(200).json({ status: 200, data: cacheData, message: '요청을 성공적으로 실행했습니다.' });
       } else {
         const getSubmitBotUser: User = await this.botService.findSubmitBotById(req.body.id);
         res.status(200).json({ status: 200 ,data: getSubmitBotUser, message: '요청을 성공적으로 실행했습니다.' });
-        cache.set(`submit_bot_${req.params.id}`, getSubmitBotUser, 18000);
+        cache.set(`submit_bot_${req.body.id}`, getSubmitBotUser, 18000);
       }
     } catch (error) {
       next(error);
