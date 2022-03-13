@@ -14,7 +14,7 @@ import serverLikeModel from '@/models/serverLike.model';
 import nodeCache from '@/utils/Cache';
 import axios, { AxiosError } from "axios";
 
-class UserService {
+class ServerService {
   public async findServerById(serverId: string): Promise<FindServerData> {
     const findServer: Server = await serverModel.findOne({id: serverId})
     if (!findServer) throw new HttpException(404, "찾을 수 없는 서버입니다");
@@ -206,7 +206,7 @@ class UserService {
     > 설명: ${req.body.sortDescription}
 
     > [확인하기](${ORIGIN}/pendinglist)
-    `)
+    `, [req.user.id], discordServer)
     return data;
   }
 
@@ -271,4 +271,4 @@ class UserService {
   }
 }
 
-export default UserService;
+export default ServerService;

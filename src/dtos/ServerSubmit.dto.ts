@@ -1,4 +1,4 @@
-import { IsArray, IsString } from 'class-validator';
+import { IsArray, IsOptional, IsString } from 'class-validator';
 
 export class SubmitServerDto {
   @IsString()
@@ -10,6 +10,7 @@ export class SubmitServerDto {
   public sortDescription: string;
   @IsArray()
   public categoios: string[];
+  @IsOptional()
   @IsString()
   public website?: string;
 }

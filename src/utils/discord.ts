@@ -5,7 +5,7 @@ import nodeCache from "./Cache";
 import { ORIGIN, SUPPORT_LOG_CHANNEL_ID, SUPPORT_SERVER_ID } from "@/config";
 
 
-type LogType = "SUBMIT_SERVER" | "SUBMIT_BOT" | "ACCEPT_SERVER"| "DENY_SERVER" |"ADD_COMMENT";
+type LogType = "SUBMIT_SERVER" | "SUBMIT_BOT" | "ACCEPT_SERVER"| "DENY_SERVER" |"ADD_COMMENT" | "ACCEPT_BOT" | "DENY_BOT";
 export const client = new Client({intents: [32767]});
 
 
@@ -74,6 +74,38 @@ export const LogSend = async (type: LogType, user: User, message: string, owners
                 - 승인까지 최대 3일이 걸릴 수 있습니다
                 `)
                 .setColor("YELLOW")
+                .setTimestamp()
+            ownerUser.send({embeds: [ownerEmbed]});
+        })
+    }
+    if(type === "ACCEPT_BOT") {
+        owners.forEach(async (owner) => {
+            let ownerUser = client.users.cache.get(owner);
+            if(!ownerUser) return;
+            const ownerEmbed = new MessageEmbed()
+                .setAuthor(`아카이브 봇 승인 알림`, client.user.avatarURL())
+                .setTitle(`🎉 축하합니다!`)
+                .setDescription(`
+                - ${bot.username} 봇이 아카이브에 승인되었습니다.
+                - 아카이브에서 봇을 확인하시려면 [여기](${ORIGIN}/bots/${bot.id})를 클릭하세요.
+                `)
+                .setColor("GREEN")
+                .setTimestamp()
+            ownerUser.send({embeds: [ownerEmbed]});
+        })
+    }
+    if(type === "DENY_BOT") {
+        owners.forEach(async (owner) => {
+            let ownerUser = client.users.cache.get(owner);
+            if(!ownerUser) return;
+            const ownerEmbed = new MessageEmbed()
+                .setAuthor(`아카이브 봇 거절 알림`, client.user.avatarURL())
+                .setDescription(`
+                - ${bot.username} 봇이 아카이브에 거절되었습니다.
+                > 거절사유
+                \`\`\`${reason}\`\`\`
+                `)
+                .setColor("RED")
                 .setTimestamp()
             ownerUser.send({embeds: [ownerEmbed]});
         })

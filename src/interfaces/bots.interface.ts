@@ -16,11 +16,13 @@ export interface Bot {
   created_at: Date;
   support?: string
   discriminator: string
-  servers: Number
+  servers: number
+  new: boolean
+  invite: string
 }
-export interface ServerComments {
+export interface botComments {
   _id: string;
-  server_id: string;
+  bot_id: string;
   user_id: string;
   comment: string;
   published_date: Date;
@@ -32,41 +34,46 @@ export interface ServerLike {
   last_like: Date
 }
 
-export interface ServerCommentsData {
+export interface botCommentsData {
   id: string;
-  server_id: string;
+  bot_id: string;
   user_id: string;
   comment: string;
   published_date: Date;
   user: User;
 }
 
-export interface FindServerData {
+export interface FindbotData {
   id: string;
   name: string;
   icon: string;
-  members: number;
-  bot: boolean;
   flags: number;
   description?: string;
   sortDescription: string;
   like: number;
   owners?: User[];
-  comments?: ServerComments[];
+  comments?: botComments[];
   categories?: string[];
   token?: string;
   published_date?: Date;
   create_date?: Date;
+  website?: string;
+  created_at: Date;
+  support?: string
+  discriminator: string
+  servers: number,
+  new?: boolean
+  invite?: string
 }
 
-export interface FindServerDataList {
-  server: FindServerData[];
+export interface FindBotDataList {
+  bot: FindbotData[];
   totalPage: number;
 }
 
 
-export interface FindServerCommentsDataList {
-  comments: ServerCommentsData[];
+export interface FindBotCommentsDataList {
+  comments: botCommentsData[];
   totalPage: number;
 }
 
@@ -79,4 +86,10 @@ export interface DiscordUserGuild {
   permissions_new: number;
   bot: boolean;
   features: string[];
+}
+
+export interface botLike {
+  bot_id: string,
+  user_id: string,
+  last_like: Date
 }

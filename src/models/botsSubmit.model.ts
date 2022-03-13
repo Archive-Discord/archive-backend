@@ -16,9 +16,10 @@ const botSchema: Schema = new Schema({
   flags: Number,
   name: String,
   icon: String,
-  discriminator: String
+  discriminator: String,
+  invite: String,
 });
 
-const botModel = model<Bot & Document>('botsubmit', botSchema);
+const botSubmitModel = model<Bot & Document>('botsubmit', botSchema);
 
-export default botModel;
+export default botSubmitModel;
