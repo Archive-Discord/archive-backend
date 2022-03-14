@@ -43,7 +43,11 @@ class AuthService {
         discordRefreshToken: token.data.refresh_token,
         email: user.data.email,
         archive_flags: 0,
-        published_date: new Date()
+        published_date: new Date(),
+        id: user.data.id,
+        username: user.data.username,
+        discriminator: user.data.discriminator,
+        avatar: user.data.avatar
       }}, {upsert: true, new: true});
       return this.createCookie(this.createToken(newUser));
     } else {

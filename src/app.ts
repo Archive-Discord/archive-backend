@@ -80,12 +80,16 @@ class App {
       logger.info(`=================================`);
     });
     const dokdo: Dokdo = new Dokdo(client, {
-      prefix: 'a',
+      prefix: 'a.',
       owners: ['406815674539835402', '896570484588703744'],
       noPerm: (message) => message.reply('당신은 Dokdo 를 이용할수 없습니다.')
     })
     client.on('messageCreate', message => {
-      dokdo.run(message)
+      try {
+        dokdo.run(message)
+      } catch(e) {
+        logger.error(e)
+      }
     })
   }
 
