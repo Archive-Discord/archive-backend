@@ -14,7 +14,9 @@ const serverSchema: Schema = new Schema({
   flags: Number,
   members: Number,
   name: String,
-  icon: String
+  icon: String,
+  support: String,
+  website: String,
 });
 
 const ServerModel = model<Server & Document>('Server', serverSchema);

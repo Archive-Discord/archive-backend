@@ -8,6 +8,7 @@ export interface Server {
   members: number;
   sortDescription: string;
   website?: string;
+  support?:string;
   like: number;
   owners: string[];
   categories: string[];
@@ -55,6 +56,8 @@ export interface FindServerData {
   token?: string;
   published_date?: Date;
   create_date?: Date;
+  website?: string;
+  support?: string;
 }
 
 export interface FindServerDataList {

@@ -40,7 +40,9 @@ class ServerService {
       name: (server ? server.name : findServer.name),
       bot: server ? true : false,
       members: (server ? server.memberCount : findServer.members),
-      flags: findServer.flags
+      flags: findServer.flags,
+      website: findServer.website,
+      support: findServer.support,
     }
     return serverData;
   }

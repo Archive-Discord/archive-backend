@@ -73,7 +73,9 @@ class SubmitlistsService {
         name: (server ? server.name : findServer.name),
         bot: server ? true : false,
         members: (server ? server.memberCount : findServer.members),
-        flags: findServer.flags
+        flags: findServer.flags,
+        website: findServer.website,
+        support: findServer.support,
       }
       return serverData;
   }
@@ -94,6 +96,8 @@ class SubmitlistsService {
     acceptServer.categories = findServer.categories;
     acceptServer.published_date = findServer.published_date;
     acceptServer.like = 0;
+    acceptServer.website = findServer.website;
+    acceptServer.support = findServer.support;
     await serverSubmitModel.deleteOne({id: serverId})
     LogSend('ACCEPT_SERVER', auth, `
     > 서버: ${server.name}
