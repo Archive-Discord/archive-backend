@@ -3,6 +3,7 @@ import userModel from "@/models/users.model";
 import { User } from "@/interfaces/users.interface";
 import nodeCache from "./Cache";
 import { ORIGIN, SUPPORT_LOG_CHANNEL_ID, SUPPORT_SERVER_ID } from "@/config";
+import { logger } from "./logger";
 
 
 type LogType = "SUBMIT_SERVER" | "SUBMIT_BOT" | "ACCEPT_SERVER"| "DENY_SERVER" |"ADD_COMMENT" | "ACCEPT_BOT" | "DENY_BOT";
@@ -15,7 +16,11 @@ export const LogSend = async (type: LogType, user: User, message: string, owners
     const logEmbed = new MessageEmbed()
         .setTitle(`[${type}] ${user.username}#${user.discriminator} (\`${user.id}\`)`)
         .setDescription(message)
-    supportChannel.send({embeds: [logEmbed]});
+    try {
+        supportChannel.send({embeds: [logEmbed]});
+    } catch(e) {
+        logger.error(e);
+    }
     if(type === "ACCEPT_SERVER") {
         owners.forEach(async (owner) => {
             let ownerUser = client.users.cache.get(owner);
@@ -29,7 +34,11 @@ export const LogSend = async (type: LogType, user: User, message: string, owners
                 `)
                 .setColor("GREEN")
                 .setTimestamp()
-            ownerUser.send({embeds: [ownerEmbed]});
+            try {
+                ownerUser.send({embeds: [ownerEmbed]});
+            } catch(e) {
+                logger.error(e);
+            }
         })
     }
     if(type === "DENY_SERVER") {
@@ -45,7 +54,11 @@ export const LogSend = async (type: LogType, user: User, message: string, owners
                 `)
                 .setColor("RED")
                 .setTimestamp()
-            ownerUser.send({embeds: [ownerEmbed]});
+            try {
+                ownerUser.send({embeds: [ownerEmbed]});
+            } catch(e) {
+                logger.error(e);
+            }
         })
     }
     if(type === "SUBMIT_SERVER") {
@@ -60,7 +73,11 @@ export const LogSend = async (type: LogType, user: User, message: string, owners
                 `)
                 .setColor("YELLOW")
                 .setTimestamp()
-            ownerUser.send({embeds: [ownerEmbed]});
+            try {
+                ownerUser.send({embeds: [ownerEmbed]});
+            } catch(e) {
+                logger.error(e);
+            }
         })
     }
     if(type === "SUBMIT_BOT") {
@@ -75,7 +92,11 @@ export const LogSend = async (type: LogType, user: User, message: string, owners
                 `)
                 .setColor("YELLOW")
                 .setTimestamp()
-            ownerUser.send({embeds: [ownerEmbed]});
+            try {
+                ownerUser.send({embeds: [ownerEmbed]});
+            } catch(e) {
+                logger.error(e);
+            }
         })
     }
     if(type === "ACCEPT_BOT") {
@@ -91,7 +112,11 @@ export const LogSend = async (type: LogType, user: User, message: string, owners
                 `)
                 .setColor("GREEN")
                 .setTimestamp()
-            ownerUser.send({embeds: [ownerEmbed]});
+            try {
+                ownerUser.send({embeds: [ownerEmbed]});
+            } catch(e) {
+                logger.error(e);
+            }
         })
     }
     if(type === "DENY_BOT") {
@@ -107,7 +132,11 @@ export const LogSend = async (type: LogType, user: User, message: string, owners
                 `)
                 .setColor("RED")
                 .setTimestamp()
-            ownerUser.send({embeds: [ownerEmbed]});
+            try {
+                ownerUser.send({embeds: [ownerEmbed]});
+            } catch(e) {
+                logger.error(e);
+            }
         })
     }
 }
