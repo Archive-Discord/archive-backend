@@ -66,7 +66,7 @@ class BotService {
         await botModel.updateOne({id: botresults.id}, {$set: {name: bot.username, discriminator: bot.discriminator, icon: bot.avatar, created_at: bot.createdAt}})
       }
       let botData: FindbotData = {
-        id: bot.id,
+        id: botresults.id,
         sortDescription: botresults.sortDescription,
         icon: (bot ? bot.avatar : botresults.icon),
         like: botresults.like,
