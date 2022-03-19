@@ -18,6 +18,7 @@ const botSchema: Schema = new Schema({
   icon: String,
   discriminator: String,
   invite: String,
+  prefix: String
 });
 
 const botSubmitModel = model<Bot & Document>('botsubmit', botSchema);

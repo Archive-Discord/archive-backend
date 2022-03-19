@@ -19,6 +19,7 @@ export interface Bot {
   servers: number
   new: boolean
   invite: string
+  prefix: string
 }
 export interface botComments {
   _id: string;
@@ -64,6 +65,7 @@ export interface FindbotData {
   servers: number,
   new?: boolean
   invite?: string
+  prefix?: string
 }
 
 export interface FindBotDataList {

@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import cache from "@utils/Cache";
 import botService from '@/services/bots.service';
 import { User } from '@/interfaces/users.interface';
-import { RequestWithUser } from '@/interfaces/auth.interface';
+import { RequestWithBot, RequestWithBotUserAuth, RequestWithUser } from '@/interfaces/auth.interface';
 import { FindBotDataList, FindbotData, FindBotCommentsDataList } from '@/interfaces/bots.interface';
 
 class botsController {
@@ -74,6 +74,33 @@ class botsController {
     }
   }
 
+  public UpdateBotServer = async (req: RequestWithBot, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const UpdateBotServerData = await this.botService.UpdateBotServer(req);
+      res.status(200).json({ data: UpdateBotServerData, message: '성공적으로 서버수를 업데이트 했습니다.' });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public RefreshBotToken = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const RefreshBotTokenData = await this.botService.refreshBotToken(req);
+      res.status(200).json({ data: RefreshBotTokenData, message: '성공적으로 봇 토큰을 재발급 했습니다' });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public UpdateBotData = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const UpdateBotBotData = await this.botService.UpdateBot(req);
+      res.status(200).json({ data: UpdateBotBotData, message: '성공적으로 봇 정보를 업데이트 했습니다' });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   public getBotComment = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       // @ts-ignore
@@ -105,6 +132,15 @@ class botsController {
     try {
       let commentData = await this.botService.deleteBotComments(req);
       res.status(200).json({ status: 200, message: '댓글을 삭제했습니다!', data: commentData });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public getBotByOwner = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const findOneServerData: FindbotData = await this.botService.findBotByOwner(req);
+      res.status(200).json({ status: 200 ,data: findOneServerData, message: '요청을 성공적으로 실행했습니다.' });
     } catch (error) {
       next(error);
     }

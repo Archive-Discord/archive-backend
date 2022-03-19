@@ -1,4 +1,4 @@
-import { IsArray, IsOptional, IsString, IsUrl } from 'class-validator';
+import { IsArray, IsNumber, IsOptional, IsString, IsUrl } from 'class-validator';
 
 export class SubmitBotDto {
   @IsString()
@@ -25,6 +25,9 @@ export class SubmitBotDto {
   @IsOptional()
   @IsString()
   public support?: string;
+
+  @IsString()
+  public prefix: string;
 }
 
 export class BotDenyDto {
@@ -50,5 +53,15 @@ export class BotComentDeleteDto {
 export class BotVerifyDto {
   @IsString()
   public captcha_token: string;
+}
+
+export class BotServerCountDto {
+  @IsNumber()
+  public servers: string;
+}
+
+export class BotTokenUpdateDto {
+  @IsString()
+  public token: string;
 }
 

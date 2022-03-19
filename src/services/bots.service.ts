@@ -1,9 +1,9 @@
 import { HttpException } from '@exceptions/HttpException';
-import { ArchiveDiscordUser, User } from '@interfaces/users.interface';
+import { User } from '@interfaces/users.interface';
 import { CAPTCHA_SECRET, ORIGIN, SECRET_KEY, TOKEN } from '@/config';
-import { verify } from 'jsonwebtoken';
+import { sign } from 'jsonwebtoken';
 import { verify as CaptchaVerify} from "hcaptcha"
-import { DataStoredInToken, RequestWithUser } from '@/interfaces/auth.interface';
+import { DataStoredInToken, RequestWithBot, RequestWithBotUserAuth, RequestWithUser } from '@/interfaces/auth.interface';
 import { client, fetchUser, getUser, LogSend } from '@/utils/discord';
 import { DiscordUserGuild, FindServerCommentsDataList, FindServerData, FindServerDataList, Server, ServerComments, ServerCommentsData } from '@/interfaces/servers.interface';
 import userModel from '@/models/users.model';
@@ -52,6 +52,7 @@ class BotService {
       website: findBot.website,
       support: findBot.support,
       invite: findBot.invite,
+      prefix: findBot.prefix
     }
     return findBotData;
   }
@@ -115,6 +116,7 @@ class BotService {
     bot.owners = [req.user.id];
     bot.categories = req.body.categoios;
     bot.invite = req.body.invite;
+    bot.prefix = req.body.prefix;
     let data: Bot = await bot.save().catch(err => {if(err) throw new HttpException(500, '데이터 저장중 오류가 발생했습니다.')}) as Bot;
     LogSend('SUBMIT_BOT', req.user, `
     > 봇: ${discordBot.username} (\`${discordBot.id}\`)
@@ -200,6 +202,68 @@ class BotService {
     nodeCache.del(`botcomments_${req.params.id}_1`);
     await botCommentModel.deleteOne({_id: req.body.id})
     return true;
+  }
+
+  public async UpdateBotServer(req: RequestWithBot): Promise<boolean> {
+    await botModel.updateOne({id: req.bot.id}, {$set: {servers: req.body.servers}})
+    return true
+  }
+
+  public async refreshBotToken(req: RequestWithUser): Promise<string> {
+    const bot = await botModel.findOne({id: req.params.id})
+    if(!bot) throw new HttpException(404, "등록되어 있지 않은 봇 입니다");
+    if(!bot.owners.includes(req.user.id)) throw new HttpException(403, "해당 봇을 관리할 권한이 없습니다");
+    const dataStoredInToken = { id: bot.id };
+    const token = sign(dataStoredInToken, SECRET_KEY, { expiresIn: 604800 })
+    await botModel.updateOne({id: bot.id}, {$set: {token: token}})
+    return token
+  }
+
+  public async UpdateBot(req: RequestWithUser): Promise<boolean> {
+    const bot = await botModel.findOne({id: req.params.id})
+    if(!bot) throw new HttpException(404, "등록되어 있지 않은 봇 입니다");
+    if(!bot.owners.includes(req.user.id)) throw new HttpException(403, "해당 봇을 관리할 권한이 없습니다");
+    await botModel.updateOne({id: bot.id}, {$set: {categories: req.body.categoios, description: req.body.description, name: req.body.name, sortDescription: req.body.sortDescription, website: req.body.website, support: req.body.support, invite: req.body.invite, prefix: req.body.prefix}})
+    nodeCache.del(`bot_${req.params.id}`);
+    return true
+  }
+
+
+  public async findBotByOwner(req: RequestWithUser): Promise<FindbotData> {
+    const findBot: Bot = await botModel.findOne({id: req.params.id})
+    if (!findBot) throw new HttpException(404, "찾을 수 없는 봇입니다");
+    if(!findBot.owners.includes(req.user.id)) throw new HttpException(403, "해당 봇을 관리할 권한이 없습니다");
+    const bot = client.users.cache.get(findBot.id)
+    const owners: User[] = [];
+    for await (const owner of findBot.owners) {
+      let user = await getUser(owner)
+      owners.push(user);
+    }
+    if(bot) {
+      await botModel.updateOne({id: bot.id}, {$set: {name: bot.username, discriminator: bot.discriminator, icon: bot.avatar, created_at: bot.createdAt}})
+    }
+    let findBotData: FindbotData = {
+      id: findBot.id,
+      description: findBot.description,
+      icon: (bot ? bot.avatar : findBot.icon),
+      sortDescription: findBot.sortDescription,
+      like: findBot.like,
+      categories: findBot.categories,
+      published_date: findBot.published_date,
+      created_at: (bot ? bot.createdAt : findBot.created_at),
+      owners: owners,
+      name: (bot ? bot.username : findBot.name),
+      new: bot ? true : false,
+      servers: findBot.servers,
+      flags: findBot.flags,
+      discriminator: (bot ? bot.discriminator : findBot.discriminator),
+      website: findBot.website,
+      support: findBot.support,
+      invite: findBot.invite,
+      token: findBot.token,
+      prefix: findBot.prefix
+    }
+    return findBotData;
   }
 }
 
