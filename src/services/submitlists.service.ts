@@ -168,6 +168,7 @@ class SubmitlistsService {
     acceptBot.published_date = findBot.published_date;
     acceptBot.like = findBot.like;
     acceptBot.invite = findBot.invite;
+    acceptBot.prefix = findBot.prefix;
     await botSubmitModel.deleteOne({id: botId})
     LogSend('ACCEPT_BOT', auth, `
     > 봇: ${bot.username}

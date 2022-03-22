@@ -20,8 +20,8 @@ const baseLimiter = ratelimit({
 })
 
 const BotServerUpdateLimiter = ratelimit({
-  windowMs: 60 * 1000 * 10, // 레이트 리밋 몇분 초기화 할건지
-  max: 5, // 레이트 리밋 최대 횟수
+  windowMs: 60 * 1000 * 1, // 레이트 리밋 몇분 초기화 할건지
+  max: 3, // 레이트 리밋 최대 횟수
   statusCode: 429, // 레이트 리밋 상태코드
   keyGenerator: (req) => req.headers['Authorization'] as string,
   handler: (req: Request, res: Response) => {
