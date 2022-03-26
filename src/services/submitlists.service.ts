@@ -146,7 +146,8 @@ class SubmitlistsService {
       flags: findBot.flags,
       discriminator: (bot ? bot.discriminator : findBot.discriminator),
       website: findBot.website,
-      support: findBot.support
+      support: findBot.support,
+      prefix: findBot.prefix
     }
     return findBotData;
   }
@@ -169,6 +170,7 @@ class SubmitlistsService {
     acceptBot.like = findBot.like;
     acceptBot.invite = findBot.invite;
     acceptBot.prefix = findBot.prefix;
+    acceptBot.support = findBot.support;
     await botSubmitModel.deleteOne({id: botId})
     LogSend('ACCEPT_BOT', auth, `
     > 봇: ${bot.username}
