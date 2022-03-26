@@ -29,4 +29,16 @@ const BotServerUpdateLimiter = ratelimit({
   }
 })
 
-export { baseLimiter, BotServerUpdateLimiter };
+
+const SearchLimiter = ratelimit({
+  windowMs: 60 * 1000 * 1, // 레이트 리밋 몇분 초기화 할건지
+  max: 100, // 레이트 리밋 최대 횟수
+  statusCode: 429, // 레이트 리밋 상태코드
+  keyGenerator: (req) => req.headers['x-forwarded-for'] as string,
+  handler: (req: Request, res: Response) => {
+    res.status(429).json({ status: 429, message: "너무 많은 검색을 시도했습니다. 잠시 후 다시 시도해주세요" });
+  }
+})
+
+
+export { baseLimiter, BotServerUpdateLimiter, SearchLimiter };
