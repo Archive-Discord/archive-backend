@@ -95,3 +95,9 @@ export interface botLike {
   user_id: string,
   last_like: Date
 }
+
+export interface botUserLike {
+  like: boolean
+  resetLike: number
+  lastLike: number
+}

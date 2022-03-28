@@ -7,7 +7,7 @@ import validationMiddleware from '@/middlewares/validation.middleware';
 import { SubmitServerDto } from '@/dtos/ServerSubmit.dto';
 import { ServerComentDeleteDto, ServerComentDto, ServerVerifyDto } from '@/dtos/ServerComent.dto';
 import { BotComentDeleteDto, BotComentDto, BotFindDto, BotServerCountDto, BotTokenUpdateDto, BotVerifyDto, SubmitBotDto } from '@/dtos/BotSubmit.dto';
-import { BotServerUpdateLimiter } from '@/middlewares/ratelimit.middleware';
+import { BotServerUpdateLimiter, BotUserLikeLimiter } from '@/middlewares/ratelimit.middleware';
 
 class UsersRoute implements Routes {
   public path = '/bots';
@@ -24,8 +24,9 @@ class UsersRoute implements Routes {
     this.router.post(`${this.path}/submit/find`, authMiddleware, validationMiddleware(BotFindDto, 'body'), this.botsController.getSubmitBotById);
     this.router.get(`${this.path}/:id`, this.botsController.getBotById);
     this.router.post(`${this.path}/:id/like`, authMiddleware, validationMiddleware(BotVerifyDto, 'body'), this.botsController.likeBot);
-    this.router.post(`${this.path}/:id/server`, authBotMiddleware, BotServerUpdateLimiter, validationMiddleware(BotServerCountDto, 'body'), this.botsController.UpdateBotServer);
-    this.router.post(`${this.path}/:id/refreshtoken`, authMiddleware, BotServerUpdateLimiter, this.botsController.RefreshBotToken);
+    this.router.get(`${this.path}/:id/like/:user_id`, BotUserLikeLimiter, authBotMiddleware, this.botsController.likeBotUserCheck);
+    this.router.post(`${this.path}/:id/server`, BotServerUpdateLimiter, authBotMiddleware, validationMiddleware(BotServerCountDto, 'body'), this.botsController.UpdateBotServer);
+    this.router.post(`${this.path}/:id/refreshtoken`, BotServerUpdateLimiter, authMiddleware, this.botsController.RefreshBotToken);
     this.router.post(`${this.path}/:id/edit`, validationMiddleware(SubmitBotDto, 'body'), authMiddleware, this.botsController.UpdateBotData);
     this.router.get(`${this.path}/:id/owner`, authMiddleware, this.botsController.getBotByOwner);
     this.router.get(`${this.path}/:id/comments`, this.botsController.getBotComment);

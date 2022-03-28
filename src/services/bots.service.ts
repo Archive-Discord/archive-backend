@@ -14,7 +14,7 @@ import serverLikeModel from '@/models/serverLike.model';
 import nodeCache from '@/utils/Cache';
 import axios, { AxiosError } from "axios";
 import { DiscordAPIError } from 'discord.js';
-import { Bot, FindBotDataList, FindbotData, FindBotCommentsDataList, botComments, botCommentsData } from '@/interfaces/bots.interface';
+import { Bot, FindBotDataList, FindbotData, FindBotCommentsDataList, botComments, botCommentsData, botUserLike } from '@/interfaces/bots.interface';
 import botModel from '@/models/bots.model';
 import botSubmitModel from '@/models/botsSubmit.model';
 import botLikeModel from '@/models/botLike.model';
@@ -155,6 +155,23 @@ class BotService {
       throw new HttpException(403, "캡챠 인증에 실패했습니다");
     }
     return true
+  }
+
+  public async likeBotUserCheck(req: RequestWithBot): Promise<botUserLike> {
+    const UserLike = await botLikeModel.findOne({bot_id: req.params.id, user_id: req.params.user_id});
+    if(!UserLike) throw new HttpException(404, "유저를 찾을 수 없습니다");
+    if((Number(new Date()) - Number(UserLike.last_like)) / (60*60*1000) > 24) {
+      return {
+        like: false,
+        resetLike: 0,
+        lastLike: Number(UserLike.last_like)
+      };
+    }
+    return {
+      like: true,
+      resetLike: Number(new Date()) - Number(UserLike.last_like),
+      lastLike: Number(UserLike.last_like)
+    };
   }
 
   public async findBotComments(botId: string, page: number): Promise<FindBotCommentsDataList> {

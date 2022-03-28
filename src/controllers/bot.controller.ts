@@ -74,6 +74,15 @@ class botsController {
     }
   }
 
+  public likeBotUserCheck = async (req: RequestWithBot, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const likeBotData = await this.botService.likeBotUserCheck(req);
+      res.status(200).json({ data: likeBotData, message: '요청을 성공적으로 실행했습니다.' });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   public UpdateBotServer = async (req: RequestWithBot, res: Response, next: NextFunction): Promise<void> => {
     try {
       const UpdateBotServerData = await this.botService.UpdateBotServer(req);

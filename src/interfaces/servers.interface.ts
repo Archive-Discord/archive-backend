@@ -81,3 +81,9 @@ export interface DiscordUserGuild {
   bot: boolean;
   features: string[];
 }
+
+export interface ServerUserLike {
+  like: boolean
+  resetLike: number
+  lastLike: number
+}

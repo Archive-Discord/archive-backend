@@ -63,7 +63,6 @@ const authReviewerMiddleware = async (req: RequestWithUser, res: Response, next:
 const authBotMiddleware = async (req: RequestWithBot, res: Response, next: NextFunction) => {
   try {
     const Authorization = (req.header('Authorization') ? req.header('Authorization').split('Bearer ')[1] : null);
-
     if (Authorization) {
       const findBot: Bot = await botModel.findOne({token: Authorization});
       if (findBot) {

@@ -5,7 +5,7 @@ import { verify } from 'jsonwebtoken';
 import { verify as CaptchaVerify} from "hcaptcha"
 import { DataStoredInToken, RequestWithUser } from '@/interfaces/auth.interface';
 import { client, getUser, LogSend } from '@/utils/discord';
-import { DiscordUserGuild, FindServerCommentsDataList, FindServerData, FindServerDataList, Server, ServerComments, ServerCommentsData } from '@/interfaces/servers.interface';
+import { DiscordUserGuild, FindServerCommentsDataList, FindServerData, FindServerDataList, Server, ServerComments, ServerCommentsData, ServerUserLike } from '@/interfaces/servers.interface';
 import userModel from '@/models/users.model';
 import serverModel from '@/models/servers.model';
 import serverSubmitModel from '@/models/serversSubmit.model';
@@ -13,6 +13,7 @@ import serverCommentModel from '@/models/serverComments.model';
 import serverLikeModel from '@/models/serverLike.model';
 import nodeCache from '@/utils/Cache';
 import axios, { AxiosError } from "axios";
+import { Request } from 'express';
 
 class ServerService {
   public async findServerById(serverId: string): Promise<FindServerData> {
@@ -270,6 +271,23 @@ class ServerService {
       throw new HttpException(403, "캡챠 인증에 실패했습니다");
     }
     return true
+  }
+
+  public async likeBotUserCheck(req: Request): Promise<ServerUserLike> {
+    const UserLike = await serverLikeModel.findOne({server_id: req.params.id, user_id: req.params.user_id});
+    if(!UserLike) throw new HttpException(404, "유저를 찾을 수 없습니다");
+    if((Number(new Date()) - Number(UserLike.last_like)) / (60*60*1000) > 24) {
+      return {
+        like: false,
+        resetLike: 0,
+        lastLike: Number(UserLike.last_like)
+      };
+    }
+    return {
+      like: true,
+      resetLike: Number(new Date()) - Number(UserLike.last_like),
+      lastLike: Number(UserLike.last_like)
+    };
   }
 }
 

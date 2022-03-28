@@ -29,6 +29,16 @@ const BotServerUpdateLimiter = ratelimit({
   }
 })
 
+const BotUserLikeLimiter = ratelimit({
+  windowMs: 60 * 1000 * 1, // 레이트 리밋 몇분 초기화 할건지
+  max: 100, // 레이트 리밋 최대 횟수
+  statusCode: 429, // 레이트 리밋 상태코드
+  keyGenerator: (req) => req.headers['Authorization'] as string,
+  handler: (req: Request, res: Response) => {
+    res.status(429).json({ status: 429, message: "요청이 너무 많습니다 잠시 후 다시 시도해주세요" });
+  }
+})
+
 
 const SearchLimiter = ratelimit({
   windowMs: 60 * 1000 * 1, // 레이트 리밋 몇분 초기화 할건지
@@ -41,4 +51,4 @@ const SearchLimiter = ratelimit({
 })
 
 
-export { baseLimiter, BotServerUpdateLimiter, SearchLimiter };
+export { baseLimiter, BotServerUpdateLimiter, SearchLimiter, BotUserLikeLimiter };
