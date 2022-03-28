@@ -167,9 +167,11 @@ class BotService {
         lastLike: Number(UserLike.last_like)
       };
     }
+    const resetDate = new Date()
+    resetDate.setDate(resetDate.getDate() + 1)
     return {
       like: true,
-      resetLike: Number(new Date()) - Number(UserLike.last_like),
+      resetLike: Number(resetDate) - Number(UserLike.last_like),
       lastLike: Number(UserLike.last_like)
     };
   }
