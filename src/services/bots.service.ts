@@ -19,6 +19,7 @@ import botModel from '@/models/bots.model';
 import botSubmitModel from '@/models/botsSubmit.model';
 import botLikeModel from '@/models/botLike.model';
 import botCommentModel from '@/models/botComments.model';
+import botReportModel from '@/models/reportbots.model';
 
 class BotService {
 
@@ -244,6 +245,22 @@ class BotService {
     if(!bot.owners.includes(req.user.id)) throw new HttpException(403, "해당 봇을 관리할 권한이 없습니다");
     await botModel.updateOne({id: bot.id}, {$set: {categories: req.body.categoios, description: req.body.description, name: req.body.name, sortDescription: req.body.sortDescription, website: req.body.website, support: req.body.support, invite: req.body.invite, prefix: req.body.prefix}})
     nodeCache.del(`bot_${req.params.id}`);
+    return true
+  }
+
+  public async ReportBot(req: RequestWithUser): Promise<boolean> {
+    const bot = await botModel.findOne({id: req.params.id})
+    if(!bot) throw new HttpException(404, "등록되어 있지 않은 봇 입니다");
+    const botReport = new botReportModel()
+    botReport.user_id = req.user.id;
+    botReport.bot_id = req.params.id;
+    botReport.resson = req.body.reason;
+    botReport.report_type = req.body.report_type;
+    botReport.save().catch(err => {if(err) throw new HttpException(500, '데이터 저장중 오류가 발생했습니다.')})
+    LogSend('ADD_COMMENT', req.user, `
+    > 봇 ${req.params.id}
+    > 댓글 ${req.body.comment}
+    `)
     return true
   }
 

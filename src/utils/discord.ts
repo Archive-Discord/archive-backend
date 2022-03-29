@@ -6,7 +6,7 @@ import { ORIGIN, SUPPORT_LOG_CHANNEL_ID, SUPPORT_SERVER_ID } from "@/config";
 import { logger } from "./logger";
 
 
-type LogType = "SUBMIT_SERVER" | "SUBMIT_BOT" | "ACCEPT_SERVER"| "DENY_SERVER" |"ADD_COMMENT" | "ACCEPT_BOT" | "DENY_BOT";
+type LogType = "SUBMIT_SERVER" | "SUBMIT_BOT" | "ACCEPT_SERVER"| "DENY_SERVER" |"ADD_COMMENT" | "ACCEPT_BOT" | "DENY_BOT" | "REPORT_BOT";
 export const client = new Client({intents: [32767]});
 
 
@@ -131,6 +131,26 @@ export const LogSend = async (type: LogType, user: User, message: string, owners
                 \`\`\`${reason}\`\`\`
                 `)
                 .setColor("RED")
+                .setTimestamp()
+            try {
+                ownerUser.send({embeds: [ownerEmbed]});
+            } catch(e) {
+                logger.error(e);
+            }
+        })
+    }
+    if(type === "REPORT_BOT") {
+        owners.forEach(async (owner) => {
+            let ownerUser = client.users.cache.get(owner);
+            if(!ownerUser) return;
+            const ownerEmbed = new MessageEmbed()
+                .setAuthor(`아카이브 봇 승인 알림`, client.user.avatarURL())
+                .setTitle(`🎉 축하합니다!`)
+                .setDescription(`
+                - ${bot.username} 봇이 아카이브에 승인되었습니다.
+                - 아카이브에서 봇을 확인하시려면 [여기](${ORIGIN}/bots/${bot.id})를 클릭하세요.
+                `)
+                .setColor("GREEN")
                 .setTimestamp()
             try {
                 ownerUser.send({embeds: [ownerEmbed]});

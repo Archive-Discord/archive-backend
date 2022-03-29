@@ -101,3 +101,10 @@ export interface botUserLike {
   resetLike: number
   lastLike: number
 }
+
+export interface BotReport {
+  resson: string
+  user_id: string
+  bot_id: string
+  report_type: string 
+}
