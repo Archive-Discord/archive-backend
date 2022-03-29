@@ -257,10 +257,11 @@ class BotService {
     botReport.resson = req.body.reason;
     botReport.report_type = req.body.report_type;
     botReport.save().catch(err => {if(err) throw new HttpException(500, '데이터 저장중 오류가 발생했습니다.')})
-    LogSend('ADD_COMMENT', req.user, `
-    > 봇 ${req.params.id}
-    > 댓글 ${req.body.comment}
-    `)
+    LogSend('REPORT_BOT', req.user, `
+    > 봇 ${bot.name} (\`${req.params.id}\`)
+    > 사유 ${req.body.reason}
+    > 신고 유형 ${req.body.report_type}
+    `, null, null, req.body.reason, null, bot)
     return true
   }
 

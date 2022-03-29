@@ -65,3 +65,11 @@ export class BotTokenUpdateDto {
   public token: string;
 }
 
+export class BotReportDto {
+  @IsString()
+  public reason: string;
+  @IsString()
+  public report_type: reportType;
+}
+
+type reportType =  "guide_line" | "personal_information" | "advertising" | "illegal_information" | "discord_tos" | "other"; 

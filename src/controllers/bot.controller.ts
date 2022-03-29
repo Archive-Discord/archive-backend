@@ -33,7 +33,7 @@ class botsController {
         res.status(200).json({ status: 200, data: cacheData, message: '요청을 성공적으로 실행했습니다.' });
       } else {
         const findOneServerData: FindBotDataList = await this.botService.findbots(Number(req.query.page));
-        res.status(200).json({ data: findOneServerData, message: '요청을 성공적으로 실행했습니다.' });
+        res.status(200).json({ status: 200, data: findOneServerData, message: '요청을 성공적으로 실행했습니다.' });
         cache.set(`bots_${Number(req.query.page)}`, findOneServerData);
       }
     } catch (error) {
@@ -59,7 +59,7 @@ class botsController {
   public addBot = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
     try {
       const addBotData = await this.botService.addBot(req);
-      res.status(200).json({ data: addBotData, message: '신청을 성공적으로 완료했습니다!' });
+      res.status(200).json({ status: 200, data: addBotData, message: '신청을 성공적으로 완료했습니다!' });
     } catch (error) {
       next(error);
     }
@@ -68,7 +68,7 @@ class botsController {
   public likeBot = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
     try {
       const likeBotData = await this.botService.likeBot(req);
-      res.status(200).json({ data: likeBotData, message: '봇에 좋아요를 추가했습니다!' });
+      res.status(200).json({ status: 200, data: likeBotData, message: '봇에 좋아요를 추가했습니다!' });
     } catch (error) {
       next(error);
     }
@@ -77,7 +77,7 @@ class botsController {
   public likeBotUserCheck = async (req: RequestWithBot, res: Response, next: NextFunction): Promise<void> => {
     try {
       const likeBotData = await this.botService.likeBotUserCheck(req);
-      res.status(200).json({ data: likeBotData, message: '요청을 성공적으로 실행했습니다.' });
+      res.status(200).json({ status: 200, data: likeBotData, message: '요청을 성공적으로 실행했습니다.' });
     } catch (error) {
       next(error);
     }
@@ -86,7 +86,16 @@ class botsController {
   public UpdateBotServer = async (req: RequestWithBot, res: Response, next: NextFunction): Promise<void> => {
     try {
       const UpdateBotServerData = await this.botService.UpdateBotServer(req);
-      res.status(200).json({ data: UpdateBotServerData, message: '성공적으로 서버수를 업데이트 했습니다.' });
+      res.status(200).json({ status: 200, data: UpdateBotServerData, message: '성공적으로 서버수를 업데이트 했습니다.' });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public ReportBot = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      await this.botService.ReportBot(req);
+      res.status(200).json({ status: 200, message: '성공적으로 신고가 접수되었습니다. 처리까지 최대 3일까지 걸릴 수 있습니다' });
     } catch (error) {
       next(error);
     }
@@ -95,7 +104,7 @@ class botsController {
   public RefreshBotToken = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
     try {
       const RefreshBotTokenData = await this.botService.refreshBotToken(req);
-      res.status(200).json({ data: RefreshBotTokenData, message: '성공적으로 봇 토큰을 재발급 했습니다' });
+      res.status(200).json({ status: 200, data: RefreshBotTokenData, message: '성공적으로 봇 토큰을 재발급 했습니다' });
     } catch (error) {
       next(error);
     }
@@ -104,7 +113,7 @@ class botsController {
   public UpdateBotData = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
     try {
       const UpdateBotBotData = await this.botService.UpdateBot(req);
-      res.status(200).json({ data: UpdateBotBotData, message: '성공적으로 봇 정보를 업데이트 했습니다' });
+      res.status(200).json({ status: 200, data: UpdateBotBotData, message: '성공적으로 봇 정보를 업데이트 했습니다' });
     } catch (error) {
       next(error);
     }
@@ -149,7 +158,7 @@ class botsController {
   public getBotByOwner = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
     try {
       const findOneServerData: FindbotData = await this.botService.findBotByOwner(req);
-      res.status(200).json({ status: 200 ,data: findOneServerData, message: '요청을 성공적으로 실행했습니다.' });
+      res.status(200).json({ status: 200, data: findOneServerData, message: '요청을 성공적으로 실행했습니다.' });
     } catch (error) {
       next(error);
     }
