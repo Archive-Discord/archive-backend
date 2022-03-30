@@ -10,12 +10,15 @@ import { verify } from 'jsonwebtoken';
 import { DataStoredInToken } from '@/interfaces/auth.interface';
 import { client } from '@/utils/discord';
 import { Server } from '@/interfaces/servers.interface';
+import { Bot } from '@/interfaces/bots.interface';
+import botModel from '@/models/bots.model';
 
 class UserService {
   public async findUserById(userId: string): Promise<User> {
-    const findUser: User = await userModel.findOne({id: userId}, {id: 1, archive_flags: 1, published_date: 1, _id: 0, name: 1, discriminator: 1, avatar: 1});
+    const findUser: User = await userModel.findOne({id: userId}, {id: 1, archive_flags: 1, published_date: 1, _id: 0, name: 1, discriminator: 1, avatar: 1, username: 1});
     if (!findUser) throw new HttpException(404, "찾을 수 없는 유저입니다");
-    const servers: Server[] = await serverModel.find({owners: { $in : [userId] }}, {_id: 0, owners: 1, categories: 1, icon: 1, name: 1, sortDescription: 1, like: 1, members: 1, id: 1, created_at: 1, flags: 1});
+    const servers: Server[] = await serverModel.find({owners: { $in : [userId] }}, {_id: 0, icon: 1, name: 1, sortDescription: 1, like: 1, members: 1, id: 1, created_at: 1, flags: 1});
+    const bots: Bot[] = await botModel.find({owners: { $in : [userId] }}, {_id: 0, icon: 1, name: 1, sortDescription: 1, like: 1, servers: 1, id: 1, created_at: 1, flags: 1, discriminator: 1});
     let discordUser = client.users.cache.get(userId);
     let userData: User = {
       id: findUser.id,
@@ -25,6 +28,7 @@ class UserService {
       discriminator: (discordUser ? discordUser.discriminator : findUser.discriminator),
       avatar: (discordUser ? discordUser.avatar : findUser.avatar),
       servers: servers,
+      bots: bots,
       new: (discordUser ? true : false)
     }
 

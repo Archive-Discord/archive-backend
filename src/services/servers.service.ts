@@ -14,6 +14,7 @@ import serverLikeModel from '@/models/serverLike.model';
 import nodeCache from '@/utils/Cache';
 import axios, { AxiosError } from "axios";
 import { Request } from 'express';
+import { Guild } from 'discord.js';
 
 class ServerService {
   public async findServerById(serverId: string): Promise<FindServerData> {
@@ -209,7 +210,7 @@ class ServerService {
     > 설명: ${req.body.sortDescription}
 
     > [확인하기](${ORIGIN}/pendinglist)
-    `, [req.user.id], discordServer)
+    `, [req.user.id], discordServer as unknown as Server)
     return data;
   }
 

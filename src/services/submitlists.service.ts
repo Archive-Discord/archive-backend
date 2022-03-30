@@ -102,7 +102,7 @@ class SubmitlistsService {
     LogSend('ACCEPT_SERVER', auth, `
     > 서버: ${server.name}
     > 서버 아이디: ${server.id}
-    `, findServer.owners, server)
+    `, findServer.owners, findServer)
     await acceptServer.save().catch(err => {if(err) throw new HttpException(500, '데이터 저장중 오류가 발생했습니다.')});
     return true;
   }
@@ -110,14 +110,12 @@ class SubmitlistsService {
   public async DenySubmitServer(serverId: string, auth: User, reason: string): Promise<boolean> {
     const findServer: Server = await serverSubmitModel.findOne({id: serverId})
     if (!findServer) throw new HttpException(404, "이미 처리가 완료되었거나, 찾을 수 없는 서버입니다");
-    const server = client.guilds.cache.get(findServer.id)
-    if (!server) throw new HttpException(400, "봇이 입장 되어있지 않습니다");
     await serverSubmitModel.deleteOne({id: serverId})
     LogSend('DENY_SERVER', auth, `
-    > 서버: ${server.name}
-    > 서버 아이디: ${server.id}
+    > 서버: ${findServer.name}
+    > 서버 아이디: ${findServer.id}
     > 거절 사유: ${reason}
-    `, findServer.owners, server, reason)
+    `, findServer.owners, findServer, reason)
     return true;
   }
 

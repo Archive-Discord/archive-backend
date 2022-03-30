@@ -5,13 +5,14 @@ import nodeCache from "./Cache";
 import { ORIGIN, SUPPORT_LOG_CHANNEL_ID, SUPPORT_SERVER_ID } from "@/config";
 import { logger } from "./logger";
 import { Bot } from "@/interfaces/bots.interface";
+import { Server } from "@/interfaces/servers.interface";
 
 
 type LogType = "SUBMIT_SERVER" | "SUBMIT_BOT" | "ACCEPT_SERVER"| "DENY_SERVER" |"ADD_COMMENT" | "ACCEPT_BOT" | "DENY_BOT" | "REPORT_BOT";
 export const client = new Client({intents: [32767]});
 
 
-export const LogSend = async (type: LogType, user: User, message: string, owners?: string[], server?: Guild, reason?: string, bot?: DiscordUser, botdata?: Bot) => {
+export const LogSend = async (type: LogType, user: User, message: string, owners?: string[], server?: Server, reason?: string, bot?: DiscordUser, botdata?: Bot) => {
     const supportGuild = client.guilds.cache.get(SUPPORT_SERVER_ID);
     const supportChannel = supportGuild.channels.cache.get(SUPPORT_LOG_CHANNEL_ID) as TextChannel;
     const logEmbed = new MessageEmbed()

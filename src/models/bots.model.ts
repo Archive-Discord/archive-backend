@@ -17,7 +17,8 @@ const botSchema: Schema = new Schema({
   name: String,
   icon: String,
   invite: String,
-  prefix: String
+  prefix: String,
+  discriminator: String
 });
 
 const botModel = model<Bot & Document>('bot', botSchema);

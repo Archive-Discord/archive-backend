@@ -1,4 +1,5 @@
 import { User as DiscordUser } from "discord.js";
+import { Bot } from "./bots.interface";
 import { Server } from "./servers.interface";
 
 export interface User {
@@ -15,6 +16,7 @@ export interface User {
   published_date?: Date;
   new?: boolean;
   servers?: Server[];
+  bots?: Bot[];
 }
 
 export interface FindeUserDiscordUser {
