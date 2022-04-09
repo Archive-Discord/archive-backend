@@ -141,13 +141,11 @@ class BotService {
       if(!like) {
         await botModel.updateOne({id: req.params.id}, {$inc: {like: 1}})
         await botLikeModel.updateOne({bot_id: req.params.id, user_id: req.user.id}, {$set: {last_like: today}}, {upsert: true})
-        nodeCache.del(`bot_${req.params.id}`)
       } else {
         let lastDate = new Date(like.last_like);
         if((Number(today) - Number(lastDate)) / (60*60*1000) > 24) {
           await botModel.updateOne({id: req.params.id}, {$inc: {like: 1}})
           await botLikeModel.updateOne({bot_id: req.params.id, user_id: req.user.id}, {$set: {last_like: today}}, {upsert: true})
-          nodeCache.del(`bot_${req.params.id}`)
         } else {
           throw new HttpException(404, "하루에 한번 좋아요를 누를 수 있습니다");
         }
