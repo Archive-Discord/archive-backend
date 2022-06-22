@@ -25,7 +25,7 @@ export const LogSend = async (type: LogType, user: User, message: string, owners
     }
     if(type === "ACCEPT_SERVER") {
         owners.forEach(async (owner) => {
-            let ownerUser = client.users.cache.get(owner);
+            const ownerUser = client.users.cache.get(owner);
             if(!ownerUser) return;
             const ownerEmbed = new MessageEmbed()
                 .setAuthor(`아카이브 서버 승인 알림`, client.user.avatarURL())
@@ -45,7 +45,7 @@ export const LogSend = async (type: LogType, user: User, message: string, owners
     }
     if(type === "DENY_SERVER") {
         owners.forEach(async (owner) => {
-            let ownerUser = client.users.cache.get(owner);
+            const ownerUser = client.users.cache.get(owner);
             if(!ownerUser) return;
             const ownerEmbed = new MessageEmbed()
                 .setAuthor(`아카이브 서버 거절 알림`, client.user.avatarURL())
@@ -65,7 +65,7 @@ export const LogSend = async (type: LogType, user: User, message: string, owners
     }
     if(type === "SUBMIT_SERVER") {
         owners.forEach(async (owner) => {
-            let ownerUser = client.users.cache.get(owner);
+            const ownerUser = client.users.cache.get(owner);
             if(!ownerUser) return;
             const ownerEmbed = new MessageEmbed()
                 .setAuthor(`아카이브 서버 신청 알림`, client.user.avatarURL())
@@ -84,7 +84,7 @@ export const LogSend = async (type: LogType, user: User, message: string, owners
     }
     if(type === "SUBMIT_BOT") {
         owners.forEach(async (owner) => {
-            let ownerUser = client.users.cache.get(owner);
+            const ownerUser = client.users.cache.get(owner);
             if(!ownerUser) return;
             const ownerEmbed = new MessageEmbed()
                 .setAuthor(`아카이브 봇 신청 알림`, client.user.avatarURL())
@@ -103,7 +103,7 @@ export const LogSend = async (type: LogType, user: User, message: string, owners
     }
     if(type === "ACCEPT_BOT") {
         owners.forEach(async (owner) => {
-            let ownerUser = client.users.cache.get(owner);
+            const ownerUser = client.users.cache.get(owner);
             if(!ownerUser) return;
             const ownerEmbed = new MessageEmbed()
                 .setAuthor(`아카이브 봇 승인 알림`, client.user.avatarURL())
@@ -123,7 +123,7 @@ export const LogSend = async (type: LogType, user: User, message: string, owners
     }
     if(type === "DENY_BOT") {
         owners.forEach(async (owner) => {
-            let ownerUser = client.users.cache.get(owner);
+            const ownerUser = client.users.cache.get(owner);
             if(!ownerUser) return;
             const ownerEmbed = new MessageEmbed()
                 .setAuthor(`아카이브 봇 거절 알림`, client.user.avatarURL())
@@ -142,7 +142,7 @@ export const LogSend = async (type: LogType, user: User, message: string, owners
         })
     }
     if(type === "REPORT_BOT") {
-        let report_user = client.users.cache.get(user.id);
+        const report_user = client.users.cache.get(user.id);
         if(!report_user) return;
         const ownerEmbed = new MessageEmbed()
                 .setAuthor(`봇 신고 접수`, client.user.avatarURL())
@@ -160,13 +160,13 @@ export const LogSend = async (type: LogType, user: User, message: string, owners
 export const getUser = async(id: string): Promise<User|null> => {
     const user = client.users.cache.get(id);
     if (!user) {
-        let user = await userModel.findOne({id: id})
+        const user = await userModel.findOne({id: id})
         if (!user) {
             return null;
         }
         return user
     } else {
-        let cache = nodeCache.get(`users_${id}`)
+        const cache = nodeCache.get(`users_${id}`)
         if(!cache) {
             await userModel.updateOne({id: id}, {username: user.username, avatar: user.avatar, discriminator: user.discriminator})
             nodeCache.set(`users_${id}`, user, 60 * 60 * 24)
@@ -175,9 +175,9 @@ export const getUser = async(id: string): Promise<User|null> => {
     }
 }
 
-export let fetchUser = async(id: string): Promise<DiscordUser|null> => {
+export const fetchUser = async(id: string): Promise<DiscordUser|null> => {
     try {
-        let user = await client.users.fetch(id)
+        const user = await client.users.fetch(id)
         return user.toJSON() as DiscordUser
     } catch(e) {
         return null

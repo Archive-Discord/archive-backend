@@ -1,4 +1,4 @@
-import { User as DiscordUser } from "discord.js";
+import { User as DiscordUser, Presence } from "discord.js";
 import { Bot } from "./bots.interface";
 import { Server } from "./servers.interface";
 
@@ -17,6 +17,7 @@ export interface User {
   new?: boolean;
   servers?: Server[];
   bots?: Bot[];
+  presence? : Presence;
 }
 
 export interface FindeUserDiscordUser {

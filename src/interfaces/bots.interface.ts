@@ -66,6 +66,7 @@ export interface FindbotData {
   new?: boolean
   invite?: string
   prefix?: string
+  status?: string
 }
 
 export interface FindBotDataList {
