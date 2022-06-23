@@ -3,7 +3,7 @@ import ServerController from '@controllers/server.controller';
 import { Routes } from '@interfaces/routes.interface';
 import authMiddleware from '@/middlewares/auth.middleware';
 import validationMiddleware from '@/middlewares/validation.middleware';
-import { SubmitServerDto } from '@/dtos/ServerSubmit.dto';
+import { SubmitServerDto, ServerReportDto } from '@/dtos/ServerSubmit.dto';
 import { ServerComentDeleteDto, ServerComentDto, ServerVerifyDto } from '@/dtos/ServerComent.dto';
 
 class UsersRoute implements Routes {
@@ -20,6 +20,7 @@ class UsersRoute implements Routes {
     this.router.get(`${this.path}/@me`, authMiddleware, this.serversController.getServersMe);
     this.router.post(`${this.path}/submit`, authMiddleware, validationMiddleware(SubmitServerDto, 'body'), this.serversController.addServer);
     this.router.get(`${this.path}/:id`, this.serversController.getServerById);
+    this.router.post(`${this.path}/:id/report`, authMiddleware, validationMiddleware(ServerReportDto, 'body'),this.serversController.reportServer);
     this.router.post(`${this.path}/:id/invite`, authMiddleware, validationMiddleware(ServerVerifyDto, 'body'), this.serversController.inviteServer);
     this.router.post(`${this.path}/:id/like`, authMiddleware, validationMiddleware(ServerVerifyDto, 'body'), this.serversController.likeServer);
     this.router.get(`${this.path}/:id/owner`, authMiddleware, this.serversController.getServerByOwner);

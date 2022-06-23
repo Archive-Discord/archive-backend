@@ -19,3 +19,12 @@ export class ServerDenyDto {
   @IsString()
   public reason: string;
 }
+
+export class ServerReportDto {
+  @IsString()
+  public reason: string;
+  @IsString()
+  public report_type: reportType;
+}
+
+type reportType =  "guide_line" | "personal_information" | "advertising" | "illegal_information" | "discord_tos" | "other"; 

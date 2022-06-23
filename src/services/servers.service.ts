@@ -23,41 +23,13 @@ import serverLikeModel from '@/models/serverLike.model';
 import nodeCache from '@/utils/Cache';
 import axios, { AxiosError } from 'axios';
 import { Request } from 'express';
+import { findServerById as findServer, findServerById} from '@/utils/Loader';
+import botReportModel from '@/models/reportbots.model';
+import { Bot } from '@/interfaces/bots.interface';
 
 class ServerService {
   public async findServerById(serverId: string): Promise<FindServerData> {
-    const findServer: Server = await serverModel.findOne({ id: serverId });
-    if (!findServer) throw new HttpException(404, '찾을 수 없는 서버입니다');
-    const server = client.guilds.cache.get(findServer.id);
-    const owners: User[] = [];
-    for await (const owner of findServer.owners) {
-      const user = await getUser(owner);
-      owners.push(user);
-    }
-    if (server) {
-      await serverModel.updateOne(
-        { id: findServer.id },
-        { $set: { name: server.name, members: server.memberCount, icon: server.icon, created_at: server.createdAt } },
-      );
-    }
-    const serverData: FindServerData = {
-      id: findServer.id,
-      description: findServer.description,
-      icon: server ? server.icon : findServer.icon,
-      sortDescription: findServer.sortDescription,
-      like: findServer.like,
-      categories: findServer.categories,
-      published_date: findServer.published_date,
-      create_date: server ? server.createdAt : findServer.created_at,
-      owners: owners,
-      name: server ? server.name : findServer.name,
-      bot: server ? true : false,
-      members: server ? server.memberCount : findServer.members,
-      flags: findServer.flags,
-      website: findServer.website,
-      support: findServer.support,
-    };
-    return serverData;
+    return await findServer(serverId)
   }
 
   public async findServerComments(serverId: string, page: number): Promise<FindServerCommentsDataList> {
@@ -322,6 +294,33 @@ class ServerService {
       resetLike: Number(new Date()) - Number(UserLike.last_like),
       lastLike: Number(UserLike.last_like),
     };
+  }
+
+  public async reportServer(req: RequestWithUser): Promise<boolean> {
+    const findServerData = await findServerById(req.params.id)
+    const botReport = new botReportModel();
+    botReport.user_id = req.user.id;
+    botReport.bot_id = req.params.id;
+    botReport.reason = req.body.reason;
+    botReport.report_type = req.body.report_type;
+    botReport.save().catch(err => {
+      if (err) throw new HttpException(500, '데이터 저장중 오류가 발생했습니다.');
+    });
+    LogSend(
+      'REPORT_SERVER',
+      req.user,
+      `
+    > 서버 ${findServerData.name} (\`${req.params.id}\`)
+    > 사유 ${req.body.reason}
+    > 신고 유형 ${req.body.report_type}
+    `,
+      null,
+      null,
+      req.body.reason,
+      null,
+      findServerData as unknown as Bot,
+    );
+    return true;
   }
 }
 

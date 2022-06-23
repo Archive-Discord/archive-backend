@@ -104,7 +104,7 @@ export interface botUserLike {
 }
 
 export interface BotReport {
-  resson: string
+  reason: string
   user_id: string
   bot_id: string
   report_type: string 

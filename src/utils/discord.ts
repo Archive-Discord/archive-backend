@@ -8,7 +8,7 @@ import { Bot } from "@/interfaces/bots.interface";
 import { Server } from "@/interfaces/servers.interface";
 
 
-type LogType = "SUBMIT_SERVER" | "SUBMIT_BOT" | "ACCEPT_SERVER"| "DENY_SERVER" |"ADD_COMMENT" | "ACCEPT_BOT" | "DENY_BOT" | "REPORT_BOT";
+type LogType = "SUBMIT_SERVER" | "SUBMIT_BOT" | "ACCEPT_SERVER"| "DENY_SERVER" |"ADD_COMMENT" | "ACCEPT_BOT" | "DENY_BOT" | "REPORT_BOT" | "REPORT_SERVER";
 export const client = new Client({intents: [32767]});
 
 
@@ -147,6 +147,20 @@ export const LogSend = async (type: LogType, user: User, message: string, owners
         const ownerEmbed = new MessageEmbed()
                 .setAuthor(`봇 신고 접수`, client.user.avatarURL())
                 .setDescription(`${botdata.name}봇에 대한 신고가 접수되었습니다.`)
+                .setColor("ORANGE")
+                .setTimestamp()
+        try {
+            report_user.send({embeds: [ownerEmbed]});
+        } catch(e) {
+            logger.error(e);
+        }
+    }
+    if(type === "REPORT_SERVER") {
+        const report_user = client.users.cache.get(user.id);
+        if(!report_user) return;
+        const ownerEmbed = new MessageEmbed()
+                .setAuthor(`서버 신고 접수`, client.user.avatarURL())
+                .setDescription(`${botdata.name}서버에 대한 신고가 접수되었습니다.`)
                 .setColor("ORANGE")
                 .setTimestamp()
         try {

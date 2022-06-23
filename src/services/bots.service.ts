@@ -28,44 +28,11 @@ import botSubmitModel from '@/models/botsSubmit.model';
 import botLikeModel from '@/models/botLike.model';
 import botCommentModel from '@/models/botComments.model';
 import botReportModel from '@/models/reportbots.model';
+import { findBotById, findBotByIdOwner } from '@/utils/Loader';
 
 class BotService {
   public async findBotById(botId: string): Promise<FindbotData> {
-    const findBot: Bot = await botModel.findOne({ id: botId });
-    if (!findBot) throw new HttpException(404, '찾을 수 없는 봇입니다');
-    const bot = client.users.cache.get(findBot.id);
-    const owners: User[] = [];
-    for await (const owner of findBot.owners) {
-      const user = await getUser(owner);
-      owners.push(user);
-    }
-    if (bot) {
-      await botModel.updateOne(
-        { id: bot.id },
-        { $set: { name: bot.username, discriminator: bot.discriminator, icon: bot.avatar, created_at: bot.createdAt } },
-      );
-    }
-    const findBotData: FindbotData = {
-      id: findBot.id,
-      description: findBot.description,
-      icon: bot ? bot.avatar : findBot.icon,
-      sortDescription: findBot.sortDescription,
-      like: findBot.like,
-      categories: findBot.categories,
-      published_date: findBot.published_date,
-      created_at: bot ? bot.createdAt : findBot.created_at,
-      owners: owners,
-      name: bot ? bot.username : findBot.name,
-      new: bot ? true : false,
-      servers: findBot.servers,
-      flags: findBot.flags,
-      discriminator: bot ? bot.discriminator : findBot.discriminator,
-      website: findBot.website,
-      support: findBot.support,
-      invite: findBot.invite,
-      prefix: findBot.prefix
-    };
-    return findBotData;
+    return await findBotById(botId);
   }
 
   public async findbots(page: number): Promise<FindBotDataList> {
@@ -302,7 +269,7 @@ class BotService {
     const botReport = new botReportModel();
     botReport.user_id = req.user.id;
     botReport.bot_id = req.params.id;
-    botReport.resson = req.body.reason;
+    botReport.reason = req.body.reason;
     botReport.report_type = req.body.report_type;
     botReport.save().catch(err => {
       if (err) throw new HttpException(500, '데이터 저장중 오류가 발생했습니다.');
@@ -325,43 +292,7 @@ class BotService {
   }
 
   public async findBotByOwner(req: RequestWithUser): Promise<FindbotData> {
-    const findBot: Bot = await botModel.findOne({ id: req.params.id });
-    if (!findBot) throw new HttpException(404, '찾을 수 없는 봇입니다');
-    if (!findBot.owners.includes(req.user.id)) throw new HttpException(403, '해당 봇을 관리할 권한이 없습니다');
-    const bot = client.users.cache.get(findBot.id);
-    const owners: User[] = [];
-    for await (const owner of findBot.owners) {
-      const user = await getUser(owner);
-      owners.push(user);
-    }
-    if (bot) {
-      await botModel.updateOne(
-        { id: bot.id },
-        { $set: { name: bot.username, discriminator: bot.discriminator, icon: bot.avatar, created_at: bot.createdAt } },
-      );
-    }
-    const findBotData: FindbotData = {
-      id: findBot.id,
-      description: findBot.description,
-      icon: bot ? bot.avatar : findBot.icon,
-      sortDescription: findBot.sortDescription,
-      like: findBot.like,
-      categories: findBot.categories,
-      published_date: findBot.published_date,
-      created_at: bot ? bot.createdAt : findBot.created_at,
-      owners: owners,
-      name: bot ? bot.username : findBot.name,
-      new: bot ? true : false,
-      servers: findBot.servers,
-      flags: findBot.flags,
-      discriminator: bot ? bot.discriminator : findBot.discriminator,
-      website: findBot.website,
-      support: findBot.support,
-      invite: findBot.invite,
-      token: findBot.token,
-      prefix: findBot.prefix,
-    };
-    return findBotData;
+    return await findBotByIdOwner(req.params.id, req.user);
   }
 }
 
