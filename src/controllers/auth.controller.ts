@@ -30,7 +30,7 @@ class AuthController {
   public logOut = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
     try {
       res.setHeader('Set-Cookie', [`Authorization=; Max-age=0; domain=${COOKIE_DOMAIN}; path=/`]);
-      res.redirect(`${ORIGIN}`);
+      res.redirect(`${ORIGIN.split(' ')[0]}`);
     } catch (error) {
       next(error);
     }
