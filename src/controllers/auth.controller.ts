@@ -13,7 +13,7 @@ class AuthController {
       const cookie = await this.authService.login(code as string);
 
       res.setHeader('Set-Cookie', [cookie]);
-      res.redirect(`${ORIGIN}/redirect`);
+      res.redirect(`${ORIGIN.split(' ')[0]}/redirect`);
     } catch (error) {
       next(error);
     }
