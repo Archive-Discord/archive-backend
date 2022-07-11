@@ -112,7 +112,7 @@ class BotService {
     > 봇: ${discordBot.username} (\`${discordBot.id}\`)
     > 설명: ${req.body.sortDescription}
 
-    > [확인하기](${ORIGIN}/pendinglist)
+    > [확인하기](${ORIGIN.split(' ')[0]}/pendinglist)
     > [초대하기](${req.body.invite})
     `,
       [req.user.id],

@@ -9,9 +9,11 @@ class SearchController {
 
   public searchByQuery = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
+
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       if(!req.query.page) req.query.page = 1;
-      let cacheData = cache.get(`search_${req.query.query}_${req.query.page}`);
+      const cacheData = cache.get(`search_${req.query.query}_${req.query.page}`);
       if(cacheData) {
         res.status(200).json({ status: 200, data: cacheData, message: '요청을 성공적으로 실행했습니다.' });
       } else {

@@ -32,7 +32,7 @@ export const LogSend = async (type: LogType, user: User, message: string, owners
                 .setTitle(`🎉 축하합니다!`)
                 .setDescription(`
                 - ${server.name} 서버가 아카이브에 승인되었습니다.
-                - 아카이브에서 서버를 확인하시려면 [여기](${ORIGIN}/servers/${server.id})를 클릭하세요.
+                - 아카이브에서 서버를 확인하시려면 [여기](${ORIGIN.split(' ')[0]}/servers/${server.id})를 클릭하세요.
                 `)
                 .setColor("GREEN")
                 .setTimestamp()
@@ -110,7 +110,7 @@ export const LogSend = async (type: LogType, user: User, message: string, owners
                 .setTitle(`🎉 축하합니다!`)
                 .setDescription(`
                 - ${bot.username} 봇이 아카이브에 승인되었습니다.
-                - 아카이브에서 봇을 확인하시려면 [여기](${ORIGIN}/bots/${bot.id})를 클릭하세요.
+                - 아카이브에서 봇을 확인하시려면 [여기](${ORIGIN.split(' ')[0]}/bots/${bot.id})를 클릭하세요.
                 `)
                 .setColor("GREEN")
                 .setTimestamp()

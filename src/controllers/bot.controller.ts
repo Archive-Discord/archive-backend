@@ -10,7 +10,7 @@ class botsController {
 
   public getBotById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      let cacheData = cache.get(`bot_${req.params.id}`);
+      const cacheData = cache.get(`bot_${req.params.id}`);
       if(cacheData) {
         res.status(200).json({ status: 200, data: cacheData, message: '요청을 성공적으로 실행했습니다.' });
       } else {
@@ -25,10 +25,10 @@ class botsController {
 
   public getBots = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
     try {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       if(!req.query.page) req.query.page = 1;
-      // @ts-ignore
-      let cacheData = cache.get(`bots_${Number(req.query.page)}`);
+      const cacheData = cache.get(`bots_${Number(req.query.page)}`);
       if(cacheData) {
         res.status(200).json({ status: 200, data: cacheData, message: '요청을 성공적으로 실행했습니다.' });
       } else {
@@ -43,7 +43,7 @@ class botsController {
 
   public getSubmitBotById = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
     try {
-      let cacheData = cache.get(`submit_bot_${req.body.id}`);
+      const cacheData = cache.get(`submit_bot_${req.body.id}`);
       if(cacheData) {
         res.status(200).json({ status: 200, data: cacheData, message: '요청을 성공적으로 실행했습니다.' });
       } else {
@@ -121,10 +121,10 @@ class botsController {
 
   public getBotComment = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       if(!req.query.page) req.query.page = 1;
-      // @ts-ignore
-      let cacheData = cache.get(`botcomments_${req.params.id}_${Number(req.query.page)}`);
+      const cacheData = cache.get(`botcomments_${req.params.id}_${Number(req.query.page)}`);
       if(cacheData) {
         res.status(200).json({ status: 200, data: cacheData, message: '요청을 성공적으로 실행했습니다.' });
       } else {
@@ -139,7 +139,7 @@ class botsController {
 
   public postBotComment = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
     try {
-      let commentData = await this.botService.addBotComments(req);
+      const commentData = await this.botService.addBotComments(req);
       res.status(200).json({ status: 200, message: '댓글를 추가했습니다!', data: commentData });
     } catch (error) {
       next(error);
@@ -148,7 +148,7 @@ class botsController {
 
   public deleteBotComment = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
     try {
-      let commentData = await this.botService.deleteBotComments(req);
+      const commentData = await this.botService.deleteBotComments(req);
       res.status(200).json({ status: 200, message: '댓글을 삭제했습니다!', data: commentData });
     } catch (error) {
       next(error);

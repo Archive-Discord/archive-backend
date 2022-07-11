@@ -209,7 +209,7 @@ class ServerService {
     > 서버: ${discordServer.name} (\`${discordServer.id}\`)
     > 설명: ${req.body.sortDescription}
 
-    > [확인하기](${ORIGIN}/pendinglist)
+    > [확인하기](${ORIGIN.split(' ')[0]}/pendinglist)
     `,
       [req.user.id],
       discordServer as unknown as Server,
